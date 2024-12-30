@@ -1,0 +1,10 @@
+FROM maven AS build
+WORKDIR /mavendir
+COPY . /mavendir
+RUN mvn clean install
+
+FROM openjdk:17-alpine
+WORKDIR /jdkdir
+COPY --from=build /mavendir/target/*.war /jdkdir
+ENTRYPOINT ["java","-jar","*.war"]
+EXPOSE 8080
