@@ -29,7 +29,7 @@ pipeline {
        
         stage('docker-image') {
           steps {
-            sh 'docker build -t .'
+            sh 'docker build -t java .'
           }
         }
         stage('docker-container') {
