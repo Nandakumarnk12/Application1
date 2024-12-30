@@ -4,12 +4,7 @@ pipeline {
         SCANNER_HOME = tool 'sonarqube'
     }
     stages {
-        stage('git checkout') {
-            steps {
-             git 'https://github.com/Nandakumarnk12/Application1.git'
-            }
-        }
-         stage('compile') {
+       stage('compile') {
             steps {
               sh 'mvn compile'
             }
