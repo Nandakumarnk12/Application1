@@ -1,6 +1,6 @@
 FROM amazonlinux AS lin
 WORKDIR /linux
-RUN git clone https://github.com/Nandakumarnk12/Application1.git /linux
+RUN yum install git -y
 
 FROM maven AS build
 WORKDIR /linux
