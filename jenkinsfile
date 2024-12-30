@@ -1,15 +1,21 @@
 pipeline {
     agent any
-     environment {
+    environment {
         SCANNER_HOME = tool 'sonar-server'
     }
+
     stages {
+        stage('git') {
+            steps {
+                git 'https://github.com/Nandakumarnk12/Application1.git'
+            }
+        }
        stage('compile') {
             steps {
               sh 'mvn compile'
             }
         }
-         stage('code analysis') {
+        stage('code analysis') {
             steps {
               withSonarQubeEnv('sonar-server') {
                sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Application1 \
@@ -18,5 +24,22 @@ pipeline {
               }
             }
         }
+        stage('build') {
+            steps {
+                sh 'mvn clean install'
+            }
+        }
+        
+        stage('image') {
+            steps {
+                sh 'docker build -t spring-boot .'
+            }
+        }
+        stage('container') {
+            steps {
+                sh 'docker run -itd --name java-container -p 8081:8080 spring-boot'
+            }
+        }
     }
 }
+
