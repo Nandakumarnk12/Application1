@@ -1,18 +1,27 @@
-FROM amazonlinux AS lin
-WORKDIR /linux
-RUN git clone https://github.com/Nandakumarnk12/Application1.git /linux
-
-FROM maven AS build
-WORKDIR /linux
-COPY --from=lin /linux /linux
-RUN mvn clean install
-
-
-FROM openjdk:17-alpine
-WORKDIR /linux
-
-COPY --from=build /linux/target/app-0.0.1-SNAPSHOT.war /linux
-
-CMD ["java", "-jar", "app-0.0.1-SNAPSHOT.war"]
-
-EXPOSE 8080
+pipeline {
+    agent any
+     environment {
+        SCANNER_HOME = tool 'sonarqube'
+    }
+    stages {
+        stage('git checkout') {
+            steps {
+             git 'https://github.com/Nandakumarnk12/Application1.git'
+            }
+        }
+         stage('compile') {
+            steps {
+              sh 'mvn compile'
+            }
+        }
+         stage('code analysis') {
+            steps {
+              withSonarQubeEnv('sonar-server') {
+               sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Application1 \
+               -Dsonar.java.binaries=. \
+               -Dsonar.projectKey=Application1'''
+              }
+            }
+        }
+    }
+}
